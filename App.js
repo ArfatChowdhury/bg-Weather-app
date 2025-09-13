@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import { useState } from 'react';
-import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
+import { Alert, Keyboard, KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 
 const API_KEY = '1c3c91771adf6a2fad672ffbbf56e00e'
 export default function App() {
@@ -26,31 +26,34 @@ export default function App() {
 
 
   return (
-    <TouchableWithoutFeedback  >
+    <KeyboardAvoidingView style={{ flex: 1 }} 
+    behavior={Platform.OS === "ios" ? "padding" : "height"}>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss} >
 
-      <View style={styles.container}>
-        <Text style={styles.title}>Weather app</Text>
-        <View style={styles.inputContainer}>
-          <TextInput
-            placeholder='Search your city'
-            value={city}
-            onChangeText={setCity}
-            style={styles.input}
-          />
-          <TouchableOpacity onPress={getWeather} style={styles.button}>
-            <Text style={styles.buttonText}>Search</Text>
-          </TouchableOpacity>
+        <View style={styles.container}>
+          <Text style={styles.title}>Weather app</Text>
+          <View style={styles.inputContainer}>
+            <TextInput
+              placeholder='Search your city'
+              value={city}
+              onChangeText={setCity}
+              style={styles.input}
+            />
+            <TouchableOpacity onPress={getWeather} style={styles.button}>
+              <Text style={styles.buttonText}>Search</Text>
+            </TouchableOpacity>
+          </View>
+          <StatusBar style="auto" />
+          <View style={styles.tempCon}>
+            <Text style={styles.City}> {weather?.name}</Text>
+            <Text style={styles.weatherDescription}>
+              {weather?.weather?.[0]?.description}
+            </Text>
+            <Text style={[styles.temp, !weather && styles.placeholderText]}> {weather ? `${weather?.main?.temp}c°` : 'Enter city to see weather' }</Text>
+          </View>
         </View>
-        <StatusBar style="auto" />
-        <View style={styles.tempCon}>
-          <Text style={styles.City}> {weather?.name}</Text>
-          <Text style={styles.weatherDescription}>
-            {weather?.weather?.[0]?.description}
-          </Text>
-          <Text style={styles.temp}> {weather?.main?.temp}c°</Text>
-        </View>
-      </View>
-    </TouchableWithoutFeedback>
+      </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
   );
 }
 
@@ -145,5 +148,11 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     textTransform: 'capitalize',
     fontWeight: '500',
+  },
+  placeholderText: {
+    fontSize: 18, 
+    fontWeight: 'normal', 
+    color: '#64748b', 
+    fontStyle: 'italic', 
   }
 });
